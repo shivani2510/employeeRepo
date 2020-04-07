@@ -1,0 +1,100 @@
+<mat-card class="athlete-card">
+    <mat-card-content>
+        <div class="athlete-container">
+            <form class="athlete-form" [formGroup]="athleteForm" (ngSubmit)="onSubmit()">
+                <mat-form-field class="athlete-full-width">
+                    <mat-label>Athlete Name</mat-label>
+                    <input formControlName="name" matInput placeholder="Name" required>
+                    <mat-error *ngIf="hasError('name','required')">Please enter name</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="athlete-full-width">
+                    <mat-label>Age</mat-label>
+                    <input matInput formControlName="age" required type="number" placeholder="Age">
+                    <mat-error *ngIf="hasError('age','required')">Please enter age</mat-error>
+                    <mat-error *ngIf="hasError('age','min')">Please enter valid age</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="athlete-full-width">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" required type="email" placeholder="email">
+                    <mat-error *ngIf="hasError('email','required')">Please enter email</mat-error>
+                    <mat-error *ngIf="hasError('email','pattern')">Please enter valid email</mat-error>
+                </mat-form-field>
+
+                <div class="contry-block">
+
+                    <mat-form-field>
+                        <mat-label>Country</mat-label>
+                        <mat-select formControlName="country" required>
+                            <mat-option [value]="cont" *ngFor="let cont of countyList">{{cont}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="hasError('country','required')">Please select country</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Language</mat-label>
+                        <mat-select formControlName="language" required>
+                            <mat-option [value]="lang" *ngFor="let lang of languageList">{{lang}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="hasError('language','required')">Please select language</mat-error>
+                    </mat-form-field>
+    
+                </div>
+                <mat-form-field class="athlete-full-width">
+                    <mat-label>Year</mat-label>
+                    <input matInput appNumberOnly formControlName="year" required type="text" placeholder="year">
+                    <mat-error *ngIf="hasError('year','required')">Please enter year</mat-error>
+                    <mat-error *ngIf="hasError('year','minlength') || hasError('year','maxlength')">Please enter valid
+                        year</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="athlete-full-width">
+                    <mat-label>Date</mat-label>
+                    <input matInput [matDatepicker]="picker1" formControlName="date" disabled placeholder="MM/DD/yyyy">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1  disabled="false"></mat-datepicker>
+                    <mat-error *ngIf="hasError('date','required')">Please select date</mat-error>
+                </mat-form-field>
+
+               
+                <mat-form-field class="athlete-full-width">
+                    <mat-label>Sport</mat-label>
+                    <mat-select formControlName="sport" required>
+                        <mat-option [value]="sp" *ngFor="let sp of sportsList">{{sp}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="hasError('sport','required')">Please select sport</mat-error>
+                </mat-form-field>
+
+                <div class="achivements">
+                    <mat-form-field>
+                        <mat-label>Gold</mat-label>
+                        <input matInput formControlName="gold" placeholder="gold" type="number">
+                        <mat-error *ngIf="hasError('gold','min')">Please enter valid number</mat-error>
+                    </mat-form-field>
+    
+                    <mat-form-field>
+                        <mat-label>Silver</mat-label>
+                        <input matInput formControlName="silver" placeholder="silver" type="number">
+                        <mat-error *ngIf="hasError('silver','min')">Please enter valid number</mat-error>
+                    </mat-form-field>
+    
+                    <mat-form-field>
+                        <mat-label>Bronze</mat-label>
+                        <input matInput formControlName="bronze" placeholder="bronze" type="number">
+                        <mat-error *ngIf="hasError('bronze','min')">Please enter valid number</mat-error>
+                    </mat-form-field>
+
+                </div>
+
+                <button type="submit">Submit</button>
+                
+            </form>
+        </div>
+
+    </mat-card-content>
+
+</mat-card>
