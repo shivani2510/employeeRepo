@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/core/http.service';
+import { HttpService } from '../../core/http.service';
 import { ATHLETE_URL } from '../../core/url.constants'
 import { Observable } from 'rxjs';
 @Injectable({
