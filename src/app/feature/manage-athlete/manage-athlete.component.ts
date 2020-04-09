@@ -63,7 +63,7 @@ export class ManageAthleteComponent implements OnInit {
         athleteList[athleteList.findIndex((e)=> e.id === this.athleteData.id )] = this.athleteForm.value;
       }else{
         let id = athleteList[athleteList.length -1].id;
-        this.athleteForm.value.id = id++;
+        this.athleteForm.value.id = id+1;
         athleteList.push(this.athleteForm.value);
       }
       this.athleteService.setAthleteList(athleteList);
