@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class AthleteService {
 
-  athleteData = {};
+  athleteData:any = {};
   athleteList = [];
   constructor() { }
 
