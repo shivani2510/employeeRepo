@@ -11,7 +11,8 @@ import 'ag-grid-enterprise';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(private dashboardService: DashboardService, private router: Router, private athleteService: AthleteService) { }
+  constructor(private dashboardService: DashboardService, private router: Router,
+     private athleteService: AthleteService) { }
 
   athleteList;
   gridParams;

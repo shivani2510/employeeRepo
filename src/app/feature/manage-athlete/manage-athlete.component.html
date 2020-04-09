@@ -26,7 +26,7 @@
 
                     <mat-form-field>
                         <mat-label>Country</mat-label>
-                        <mat-select formControlName="country" required>
+                        <mat-select formControlName="country" required name="country">
                             <mat-option [value]="cont" *ngFor="let cont of countyList">{{cont}}
                             </mat-option>
                         </mat-select>
