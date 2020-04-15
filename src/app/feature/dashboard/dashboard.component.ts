@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
   constructor(private dashboardService: DashboardService, private router: Router,
      private athleteService: AthleteService) { }
 
-  athleteList;
+  athleteList =[];
   gridParams;
   context = this;
 
@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit {
 
   deleteRecord(params){
     this.athleteList.splice(this.athleteList.findIndex((e)=>e.id === params.data.id),1);
-    this.athleteService.setAthleteList(this.athleteService.athleteList);
+    this.athleteService.setAthleteList(this.athleteList);
 
     params.node.setSelected(true);
     var selectedData = this.gridParams.getSelectedRows();
