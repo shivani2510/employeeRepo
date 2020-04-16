@@ -1,4 +1,7 @@
 <div class="grid-wrapper">
+    <div class="right-align"> 
+        <button mat-raised-button color="primary" [routerLink]="'/manage'">Add</button>
+    </div>
     <ag-grid-angular #agGrid style="width: 100%; height: 100%;" id="myGrid" class="ag-theme-alpine"
         [columnDefs]="columnConfig" [defaultColDef]="defaultColDef" [rowData]="athleteList"
         (gridReady)="onGridReady($event)" [context]="context" [sideBar]="sidebarConfig" ></ag-grid-angular>
