@@ -1,0 +1,12 @@
+{
+    "baseUrl": "http://localhost:4200",
+    "include": [
+        "integration/*.ts",
+        "../node_modules/cypress"
+    ],
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true
+    }
+}

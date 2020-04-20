@@ -1,8 +1,20 @@
 <div class="grid-wrapper">
-    <div class="right-align"> 
-        <button mat-raised-button color="primary" [routerLink]="'/manage'">Add</button>
+    <div class="right-align">
+        <button mat-raised-button color="primary" (click)="addToSelected()">Add to Cart</button>
+        <button mat-raised-button color="primary" [routerLink]="'/manage'">Add Athlete</button>
     </div>
-    <ag-grid-angular #agGrid style="width: 100%; height: 100%;" id="myGrid" class="ag-theme-alpine"
+    <ag-grid-angular #agGrid style="width: 100%; height: 80%;" id="myGrid" class="ag-theme-alpine"
         [columnDefs]="columnConfig" [defaultColDef]="defaultColDef" [rowData]="athleteList"
-        (gridReady)="onGridReady($event)" [context]="context" [sideBar]="sidebarConfig" ></ag-grid-angular>
+        (gridReady)="onGridReady($event)" [gridOptions]="gridOptions">
+    </ag-grid-angular>
+
+
+
+    <div class="cart-div">
+
+        <ag-grid-angular #agGrid style="width: 100%; height: 50%;" id="myGrid" class="ag-theme-alpine"
+            [columnDefs]="selectionGridConfig" [defaultColDef]="defaultColDef" (gridReady)="onGridReadySelectedRows($event)"
+            [gridOptions]="selectionGridOptions">
+        </ag-grid-angular>
+    </div>
 </div>
