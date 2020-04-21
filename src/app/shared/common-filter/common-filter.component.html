@@ -1,0 +1,27 @@
+<div>
+    <div class="filter-block">
+
+        <mat-form-field>
+            <mat-label>Field</mat-label>
+            <mat-select [(value)]="selectedField" name="field" id="field">
+                <ng-container *ngFor="let field of fieldList">
+                    <mat-option [value]="field" *ngIf="field.name">{{field.name}}
+                    </mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Value</mat-label>
+            <input [(ngModel)]="searchText" (keyup.enter)="onSearchClick()"  matInput placeholder="searchText" id="searchText">
+            <!-- <mat-error *ngIf="hasError('name','required')">Please enter name</mat-error> -->
+            <mat-icon matSuffix (click)="onSearchClick()">search</mat-icon>
+        </mat-form-field>
+        <button class="clear-all-btn" mat-raised-button (click)="onClearAllFilterClick()">Clear Filter</button>
+    </div>
+    <div class="filter-list">
+        <div *ngFor="let filter of appliedFilterList;" class="filter-box">
+            <span>{{filter.field}}</span> - {{filter.value}}
+            <mat-icon class="icon-close" (click)="onClearFieldFilterClick(filter)">close</mat-icon>
+        </div>
+    </div>
+</div>

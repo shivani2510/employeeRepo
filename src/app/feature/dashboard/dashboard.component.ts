@@ -51,12 +51,14 @@ export class DashboardComponent implements OnInit {
   selectionGridOptions = { context: this };
   athleteGridConfig;
   cartGridConfig;
+  fieldList = [];
 
-  
   constructor(private dashboardService: DashboardService, private router: Router,
     private athleteService: AthleteService) {
     this.columnConfig = this.getGridConfig('athlete');
     this.selectionGridConfig = this.getGridConfig('selection');
+
+    this.fieldList = this.columnConfig.map((e) => {return {name:e.field,filterType:e.filter}});
   }
 
   ngOnInit(): void {
@@ -66,7 +68,6 @@ export class DashboardComponent implements OnInit {
     } else {
       this.getAthletsList();
     }
-
   }
 
   getAthletsList() {
@@ -115,7 +116,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getGridConfig(grid) {
-    let gridCol = [
+    let gridCol: any = [
       {
         field: 'name',
         headerName: 'Name',
@@ -132,6 +133,7 @@ export class DashboardComponent implements OnInit {
       }, {
         field: 'country',
         headerName: 'Country',
+        filter: 'agSetColumnFilter',
         floatingFilterComponentParams: { suppressFilterButton: false }
       }, {
         field: 'year',
@@ -145,6 +147,7 @@ export class DashboardComponent implements OnInit {
       }, {
         field: 'sport',
         headerName: 'Sport',
+        filter: 'agSetColumnFilter',
         floatingFilterComponentParams: { suppressFilterButton: false },
       }, {
         field: 'gold',
@@ -216,6 +219,37 @@ export class DashboardComponent implements OnInit {
       return gridCol;
     }
 
+  }
+
+  onSearch(event) {
+    var filterInstance = this.gridParams.getFilterInstance(event.field);
+    if(event.filterType === 'agSetColumnFilter'){
+      filterInstance.selectNothing();
+      filterInstance.selectValue(event.value);
+      filterInstance.applyModel();
+    }else{
+      filterInstance.setModel({
+        type: 'contains',
+        filter: event.value
+      });
+    }
+    this.gridParams.onFilterChanged();
+  }
+
+  onClearAllFilter(event){
+    this.gridParams.setFilterModel(null);
+    this.gridParams.onFilterChanged();
+  }
+
+  onClearFieldFilter(event){
+    var filterInstance = this.gridParams.getFilterInstance(event.field);
+    if(event.filterType === 'agSetColumnFilter'){
+      filterInstance.selectEverything();
+      filterInstance.applyModel();
+    }else{
+      filterInstance.setModel(null);
+    }
+    this.gridParams.onFilterChanged();
   }
 
 }

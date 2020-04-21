@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { CustomMaterialModule } from './material.module';
 import { AgGridModule } from 'ag-grid-angular';
-import { CommonAgGridTemplateComponent } from './common-ag-grid-template/common-ag-grid-template.component';
+import { CommonFilterComponent } from './common-filter/common-filter.component';
 
 
 @NgModule({
-  declarations: [CommonAgGridTemplateComponent],
+  declarations: [CommonFilterComponent],
   imports: [
+    FormsModule,
+    CommonModule,
+    CustomMaterialModule,
     AgGridModule.withComponents([])
   ],
   exports:[CommonModule,
@@ -16,7 +19,7 @@ import { CommonAgGridTemplateComponent } from './common-ag-grid-template/common-
     ReactiveFormsModule,
     CustomMaterialModule,
     AgGridModule,
-    CommonAgGridTemplateComponent
+    CommonFilterComponent
   ]
 })
 export class SharedModule { }

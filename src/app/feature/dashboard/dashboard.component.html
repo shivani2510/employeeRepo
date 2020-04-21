@@ -3,6 +3,8 @@
         <button mat-raised-button color="primary" (click)="addToSelected()">Add to Cart</button>
         <button mat-raised-button color="primary" [routerLink]="'/manage'">Add Athlete</button>
     </div>
+    <app-common-filter [fieldList]="fieldList" (onSearch)="onSearch($event)"
+        (onClearAllFilter)="onClearAllFilter($event)" (onClearFieldFilter)="onClearFieldFilter($event)"></app-common-filter>
     <ag-grid-angular #agGrid style="width: 100%; height: 80%;" id="myGrid" class="ag-theme-alpine"
         [columnDefs]="columnConfig" [defaultColDef]="defaultColDef" [rowData]="athleteList"
         (gridReady)="onGridReady($event)" [gridOptions]="gridOptions">
@@ -13,8 +15,8 @@
     <div class="cart-div">
 
         <ag-grid-angular #agGrid style="width: 100%; height: 50%;" id="myGrid" class="ag-theme-alpine"
-            [columnDefs]="selectionGridConfig" [defaultColDef]="defaultColDef" (gridReady)="onGridReadySelectedRows($event)"
-            [gridOptions]="selectionGridOptions">
+            [columnDefs]="selectionGridConfig" [defaultColDef]="defaultColDef"
+            (gridReady)="onGridReadySelectedRows($event)" [gridOptions]="selectionGridOptions">
         </ag-grid-angular>
     </div>
 </div>
