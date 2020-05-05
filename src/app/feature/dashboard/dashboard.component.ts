@@ -3,6 +3,10 @@ import { DashboardService } from '../services/dashboard.service';
 import { Router } from '@angular/router';
 import { AthleteService } from '../services/athlete.service';
 import 'ag-grid-enterprise';
+import { TextCellEditorComponent } from './text-cell-editor.component';
+import { RowNode, Column, ColumnApi } from 'ag-grid-community';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NumberCellEditorComponent } from './number-cell-editor.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,6 +17,7 @@ export class DashboardComponent implements OnInit {
 
   athleteList = [];
   gridParams;
+  gridColumnApi;
   context = this;
   gridOptions = {
     floatingFilter: true,
@@ -35,8 +40,12 @@ export class DashboardComponent implements OnInit {
         },
       ]
     },
-    rowSelection: 'multiple'
-  }
+    rowSelection: 'multiple',
+    frameworkComponents: {
+      textCellEditorComponent: TextCellEditorComponent,
+      numberCellEditorComponent: NumberCellEditorComponent
+    }
+  };
   columnConfig;
   selectionGridConfig;
   defaultColDef = {
@@ -52,13 +61,14 @@ export class DashboardComponent implements OnInit {
   athleteGridConfig;
   cartGridConfig;
   fieldList = [];
+  formGroupCtrl: FormGroup = new FormGroup({});
 
   constructor(private dashboardService: DashboardService, private router: Router,
     private athleteService: AthleteService) {
     this.columnConfig = this.getGridConfig('athlete');
     this.selectionGridConfig = this.getGridConfig('selection');
 
-    this.fieldList = this.columnConfig.map((e) => {return {name:e.field,filterType:e.filter}});
+    this.fieldList = this.columnConfig.map((e) => { return { name: e.field, filterType: e.filter } });
   }
 
   ngOnInit(): void {
@@ -81,9 +91,35 @@ export class DashboardComponent implements OnInit {
 
   onGridReady(params) {
     this.gridParams = params.api;
+    this.gridColumnApi = params.columnApi;
+
+    this.createFormControls();
+    params.api.refreshCells({ force: true });
     // this.gridParams.sizeColumnsToFit();
   }
 
+  createFormControls() {
+    let columns = this.gridColumnApi.getAllColumns();
+
+    this.gridParams.forEachNode((rowNode: RowNode) => {
+      columns.filter(column => column.getColDef().field === 'age' || column.getColDef().field === 'name')
+        .forEach((column: Column) => {
+          const key = this.createKey(rowNode.id, column);
+          this.formGroupCtrl.addControl(key, new FormControl())
+          const field = column.getColDef().field;
+          if(column.getColDef().field === 'age'){
+            this.formGroupCtrl.get(key).setValidators([Validators.required,Validators.min(1)])
+          }else{
+            this.formGroupCtrl.get(key).setValidators([Validators.required])
+          }
+          this.formGroupCtrl.get(key).setValue(rowNode.data[field]);
+        })
+    });
+  }
+
+  private createKey(rowId: string, column: Column): string {
+    return `${rowId}${column.getColId()}`;
+  }
   editRecord(data) {
     this.athleteService.setAthlete(data);
     this.router.navigate(['manage']);
@@ -121,11 +157,18 @@ export class DashboardComponent implements OnInit {
         field: 'name',
         headerName: 'Name',
         filter: 'agTextColumnFilter',
-        checkboxSelection: true
+        checkboxSelection: true,
+        editable: true,
+        cellEditor: 'textCellEditorComponent'
       }, {
         field: 'age',
         headerName: 'Age',
-        filter: 'agNumberColumnFilter'
+        filter: 'agNumberColumnFilter',
+        editable: true,
+        cellEditor: 'numberCellEditorComponent',
+        cellClassRules:{'error-class':(params)=>{
+         return params.value <= 0
+        }}
       }, {
         field: 'email',
         headerName: 'Email',
@@ -142,8 +185,31 @@ export class DashboardComponent implements OnInit {
       }, {
         field: 'date',
         headerName: 'Date',
-        filter: 'agDateColumnFilter',
-        floatingFilterComponentParams: { suppressFilterButton: false },
+        filter: 'agDateColumnFilter', filterParams: {
+
+          // provide comparator function
+          comparator: function (filterLocalDateAtMidnight, cellValue) {
+            var dateAsString = cellValue;
+            if (dateAsString == null) return 0;
+
+            // In the example application, dates are stored as dd/mm/yyyy
+            // We create a Date object for comparison against the filter date
+            var dateParts = dateAsString.split("/");
+            var day = Number(dateParts[1]);
+            var month = Number(dateParts[0]) - 1;
+            var year = Number(dateParts[2]);
+            var cellDate = new Date(year, month, day);
+
+            // Now that both parameters are Date objects, we can compare
+            if (cellDate < filterLocalDateAtMidnight) {
+              return -1;
+            } else if (cellDate > filterLocalDateAtMidnight) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        }
       }, {
         field: 'sport',
         headerName: 'Sport',
@@ -223,11 +289,16 @@ export class DashboardComponent implements OnInit {
 
   onSearch(event) {
     var filterInstance = this.gridParams.getFilterInstance(event.field);
-    if(event.filterType === 'agSetColumnFilter'){
+    if (event.filterType === 'agSetColumnFilter') {
       filterInstance.selectNothing();
       filterInstance.selectValue(event.value);
       filterInstance.applyModel();
-    }else{
+    } else if (event.filterType === 'agDateColumnFilter') {
+      filterInstance.setModel({
+        type: 'equals',
+        dateFrom: event.value
+      });
+    } else {
       filterInstance.setModel({
         type: 'contains',
         filter: event.value
@@ -236,20 +307,25 @@ export class DashboardComponent implements OnInit {
     this.gridParams.onFilterChanged();
   }
 
-  onClearAllFilter(event){
+  onClearAllFilter(event) {
     this.gridParams.setFilterModel(null);
     this.gridParams.onFilterChanged();
   }
 
-  onClearFieldFilter(event){
+  onClearFieldFilter(event) {
     var filterInstance = this.gridParams.getFilterInstance(event.field);
-    if(event.filterType === 'agSetColumnFilter'){
+    if (event.filterType === 'agSetColumnFilter') {
       filterInstance.selectEverything();
       filterInstance.applyModel();
-    }else{
+    } else {
       filterInstance.setModel(null);
     }
     this.gridParams.onFilterChanged();
+  }
+
+  onSubmit() {
+    console.dir(this.formGroupCtrl.value);
+    console.dir(this.formGroupCtrl.valid);
   }
 
 }

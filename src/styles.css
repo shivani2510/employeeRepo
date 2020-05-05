@@ -3,3 +3,5 @@
 @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; width:100%; }
+
+.error-class{border:1px solid red !important;}
